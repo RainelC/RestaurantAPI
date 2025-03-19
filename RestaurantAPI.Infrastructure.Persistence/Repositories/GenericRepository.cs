@@ -38,6 +38,18 @@ namespace RestaurantAPI.Infrastructure.Persistence.Repositories
             return await _dbContext.Set<Entity>().ToListAsync();
         }
 
+        public virtual async Task<List<Entity>> GetAllWithIncludeAsync(List<string> properties)
+        {
+            var query = _dbContext.Set<Entity>().AsQueryable();
+
+            foreach (var property in properties)
+            {
+                query = query.Include(property);
+            }
+            
+            return await query.ToListAsync();
+        }
+
         public virtual async Task<Entity> GetByIdAsync(int id)
         {
             return await _dbContext.Set<Entity>().FindAsync(id);

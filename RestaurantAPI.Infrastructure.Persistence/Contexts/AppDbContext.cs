@@ -32,16 +32,21 @@ namespace RestaurantAPI.Infrastructure.Persistence.Contexts
             // RelationShips
 
             modelBuilder.Entity<Dish>()
-                .HasMany(u => u.Ingredients)
-                .WithMany();
+                .HasMany(d => d.Ingredients)
+                .WithMany(i => i.dishes)
+                .UsingEntity<Dictionary<string, object>>(
+                "DishIngredient",
+                j => j.HasOne<Ingredient>().WithMany().HasForeignKey("IngredientsId"),
+                j => j.HasOne<Dish>().WithMany().HasForeignKey("dishesId"));
 
             modelBuilder.Entity<Order>()
                 .HasMany(u => u.Dishes)
-                .WithOne();
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Order>()
                 .HasOne(u => u.Table)
-                .WithMany()
+                .WithMany(t => t.Orders)
                 .HasForeignKey(u => u.TableId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

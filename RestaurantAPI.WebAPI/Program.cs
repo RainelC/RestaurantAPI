@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Builder;
+using RestaurantAPI.Core.Application.Mappings;
 using RestaurantAPI.Infrastructure.Persistence;
+using RestaurantAPI.WebAPI.Extensions;
 
 namespace RestaurantAPI.WebAPI
 {
@@ -11,10 +14,12 @@ namespace RestaurantAPI.WebAPI
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Services.AddSession();
-            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddHealthChecks();
             builder.Services.AddPersistenceLayer(builder.Configuration);
-
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
+            builder.Services.AddSwaggerExtension();
+            builder.Services.AddApiVersioningExtension();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -28,11 +33,18 @@ namespace RestaurantAPI.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
-            app.UseCors();
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSwaggerExtension();
+            app.UseHealthChecks("/health");
+            app.UseSession();
 
             app.MapControllers();
 

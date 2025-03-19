@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RestaurantAPI.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
+using RestaurantAPI.Infrastructure.Persistence.Contexts;
 using RestaurantAPI.Core.Application.Interfaces.Repositories;
 using RestaurantAPI.Core.Application.Interfaces.Services;
-using RestaurantAPI.Core.Application.Mappings;
 using RestaurantAPI.Core.Application.Services;
 using RestaurantAPI.Infrastructure.Persistence.Repositories;
+using RestaurantAPI.Core.Application.Mappings;
 
 namespace RestaurantAPI.Infrastructure.Persistence
 {
@@ -31,7 +31,8 @@ namespace RestaurantAPI.Infrastructure.Persistence
             }
 
             // AutoMapper
-            //services.AddAutoMapper(typeof(GeneralProfile));
+            services.AddAutoMapper(typeof(GeneralProfile));
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             // Repositories
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -41,6 +42,10 @@ namespace RestaurantAPI.Infrastructure.Persistence
             services.AddTransient<ITableRepository, TableRepository>();
 
             // Services
+            services.AddTransient<IDishService, DishService>();
+            services.AddTransient<IIngredientService, IngredientService>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<ITableService, TableService>();
         }
     }
 }

@@ -12,7 +12,7 @@ using RestaurantAPI.Infrastructure.Persistence.Contexts;
 namespace RestaurantAPI.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250314044851_Initial-Migration")]
+    [Migration("20250315184654_Initial-Migration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -27,15 +27,15 @@ namespace RestaurantAPI.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DishIngredient", b =>
                 {
-                    b.Property<int>("DishId")
-                        .HasColumnType("int");
-
                     b.Property<int>("IngredientsId")
                         .HasColumnType("int");
 
-                    b.HasKey("DishId", "IngredientsId");
+                    b.Property<int>("dishesId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("IngredientsId");
+                    b.HasKey("IngredientsId", "dishesId");
+
+                    b.HasIndex("dishesId");
 
                     b.ToTable("DishIngredient");
                 });
@@ -140,15 +140,15 @@ namespace RestaurantAPI.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("DishIngredient", b =>
                 {
-                    b.HasOne("RestaurantAPI.Core.Domain.Entities.Dish", null)
-                        .WithMany()
-                        .HasForeignKey("DishId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("RestaurantAPI.Core.Domain.Entities.Ingredient", null)
                         .WithMany()
                         .HasForeignKey("IngredientsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RestaurantAPI.Core.Domain.Entities.Dish", null)
+                        .WithMany()
+                        .HasForeignKey("dishesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -157,13 +157,14 @@ namespace RestaurantAPI.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("RestaurantAPI.Core.Domain.Entities.Order", null)
                         .WithMany("Dishes")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("RestaurantAPI.Core.Domain.Entities.Order", b =>
                 {
                     b.HasOne("RestaurantAPI.Core.Domain.Entities.Table", "Table")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -174,6 +175,11 @@ namespace RestaurantAPI.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("RestaurantAPI.Core.Domain.Entities.Order", b =>
                 {
                     b.Navigation("Dishes");
+                });
+
+            modelBuilder.Entity("RestaurantAPI.Core.Domain.Entities.Table", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

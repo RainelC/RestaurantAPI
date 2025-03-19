@@ -78,22 +78,23 @@ namespace RestaurantAPI.Infrastructure.Persistence.Migrations
                         name: "FK_Dishes_Orders_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Orders",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "DishIngredient",
                 columns: table => new
                 {
-                    DishId = table.Column<int>(type: "int", nullable: false),
-                    IngredientsId = table.Column<int>(type: "int", nullable: false)
+                    IngredientsId = table.Column<int>(type: "int", nullable: false),
+                    dishesId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DishIngredient", x => new { x.DishId, x.IngredientsId });
+                    table.PrimaryKey("PK_DishIngredient", x => new { x.IngredientsId, x.dishesId });
                     table.ForeignKey(
-                        name: "FK_DishIngredient_Dishes_DishId",
-                        column: x => x.DishId,
+                        name: "FK_DishIngredient_Dishes_dishesId",
+                        column: x => x.dishesId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -111,9 +112,9 @@ namespace RestaurantAPI.Infrastructure.Persistence.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DishIngredient_IngredientsId",
+                name: "IX_DishIngredient_dishesId",
                 table: "DishIngredient",
-                column: "IngredientsId");
+                column: "dishesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_TableId",

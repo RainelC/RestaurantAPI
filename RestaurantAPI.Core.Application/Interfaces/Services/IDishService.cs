@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RestaurantAPI.Core.Application.ViewModels.Dish;
+using RestaurantAPI.Core.Domain.Entities;
 
 namespace RestaurantAPI.Core.Application.Interfaces.Services
 {
-    public interface IDishService 
+    public interface IDishService : IGenericService<SaveDishViewModel, DishViewModel, Dish>
     {
     }
 }
