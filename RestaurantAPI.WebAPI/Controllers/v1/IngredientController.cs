@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Core.Application.Interfaces.Services;
 using RestaurantAPI.Core.Application.ViewModels.Ingredient;
 using RestaurantAPI.Core.Domain.Entities;
@@ -6,6 +7,7 @@ using RestaurantAPI.Core.Domain.Entities;
 namespace RestaurantAPI.WebAPI.Controllers.v1
 {
     [ApiVersion("1.0")]
+    [Authorize(Roles = "Admin")]
     public class IngredientController : BaseApiController
     {
         private readonly IIngredientService _ingredientService;
@@ -47,7 +49,7 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
                 {
                     return BadRequest();
                 }
-
+                vm.Id = id;
                 await _ingredientService.Update(vm, id);
                 return Ok(vm);
             }

@@ -19,14 +19,12 @@ namespace RestaurantAPI.Infrastructure.Persistence.Repositories
             await _dbContext.Set<Entity>().AddAsync(entity);
             await _dbContext.SaveChangesAsync();
         }
-
         public virtual async Task UpdateAsync(Entity entity, int id)
         {
             Entity entry = await _dbContext.Set<Entity>().FindAsync(id);
             _dbContext.Entry(entry).CurrentValues.SetValues(entity);
             await _dbContext.SaveChangesAsync();
         }
-
         public virtual async Task DeleteAsync(Entity entity)
         {
             _dbContext.Set<Entity>().Remove(entity);

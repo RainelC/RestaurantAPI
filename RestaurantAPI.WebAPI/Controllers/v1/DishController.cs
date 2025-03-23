@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RestaurantAPI.Core.Application.Enums;
 using RestaurantAPI.Core.Application.Interfaces.Services;
 using RestaurantAPI.Core.Application.ViewModels.Dish;
-using RestaurantAPI.Core.Application.ViewModels.Ingredient;
-using RestaurantAPI.Core.Domain.Entities;
 
 namespace RestaurantAPI.WebAPI.Controllers.v1
 {
     [ApiVersion("1.0")]
+    [Authorize(Roles = "Admin")]
     public class DishController : BaseApiController
     {
         private readonly IDishService _dishService;

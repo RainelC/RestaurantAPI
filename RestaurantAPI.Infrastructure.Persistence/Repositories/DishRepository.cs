@@ -1,4 +1,5 @@
-﻿using RestaurantAPI.Core.Application.Interfaces.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using RestaurantAPI.Core.Application.Interfaces.Repositories;
 using RestaurantAPI.Core.Domain.Entities;
 using RestaurantAPI.Infrastructure.Persistence.Contexts;
 using System;
@@ -15,6 +16,11 @@ namespace RestaurantAPI.Infrastructure.Persistence.Repositories
         public DishRepository(AppDbContext context) : base(context)
         {
             _dbContext = context;
+        }
+
+        public async Task<List<Dish>> GetAllByIds(List<int> ids)
+        {
+            return await _dbContext.Dishes.Where(i => ids.Contains(i.Id)).AsNoTracking().ToListAsync();
         }
     }
 }

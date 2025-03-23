@@ -18,6 +18,11 @@ namespace RestaurantAPI.Core.Application.Services
             _mapper = mapper;
         }
 
+        public async Task ChanceStatusTable(int id, string newStatus)
+        {
+            await _tableRepository.ChanceStatusTable(id, newStatus);
+        }
+
         public async Task<List<OrderViewModel>> GetTableOrdenAsync(int id)
         {
            var tables = await _tableRepository.GetTableOrdenAsync(id);

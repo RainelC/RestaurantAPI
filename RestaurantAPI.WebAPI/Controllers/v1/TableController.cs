@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using RestaurantAPI.Core.Application.Enums;
 using RestaurantAPI.Core.Application.Interfaces.Services;
-using RestaurantAPI.Core.Application.Services;
-using RestaurantAPI.Core.Application.ViewModels.Ingredient;
 using RestaurantAPI.Core.Application.ViewModels.Order;
 using RestaurantAPI.Core.Application.ViewModels.Table;
 
@@ -11,12 +12,15 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
     public class TableController : BaseApiController
     {
         private readonly ITableService _tableService;
-        public TableController(ITableService tableService)
+        private readonly IMapper _mapper;
+        public TableController(ITableService tableService, IMapper mapper)
         {
             _tableService = tableService;
+            _mapper = mapper;
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -37,10 +41,11 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
             }
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(SaveTableViewModel vm, int id)
+        public async Task<IActionResult> Update(UpdateTableViewModel vm, int id)
         {
             try
             {
@@ -48,7 +53,7 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
                 {
                     return BadRequest();
                 }
-                await _tableService.Update(vm, id);
+                await _tableService.Update(_mapper.Map<SaveTableViewModel>(vm), id);
                 return Ok(vm);
             }
             catch (Exception ex)
@@ -58,6 +63,8 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Waiter")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = (typeof(TableViewModel)))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -80,6 +87,8 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Waiter")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = (typeof(SaveTableViewModel)))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -102,27 +111,45 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
         }
 
 
-        //[HttpGet("{id}")]
-        //[ProducesResponseType(StatusCodes.Status200OK, Type = (typeof(OrderViewModel)))]
-        //[ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<IActionResult> GetTableOrden(int id)
-        //{
-        //    try
-        //    {
-        //        var orders = await _tableService.GetTableOrdenAsync(id);
+        [HttpGet("{id}/tableorden")]
+        [Authorize(Roles = "Waiter")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = (typeof(OrderViewModel)))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetTableOrden(int id)
+        {
+            try
+            {
+                var orders = await _tableService.GetTableOrdenAsync(id);
 
-        //        if (orders == null || orders.Count == 0)
-        //        {
-        //            return NoContent();
-        //        }
-        //        return Ok(orders);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-        //    }
-        //}
+                if (orders == null || orders.Count == 0)
+                {
+                    return NoContent();
+                }
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Waiter")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ChangeStatus(int id, TableStatus newStatus)
+        {
+            try
+            {
+                await _tableService.ChanceStatusTable(id, newStatus.ToString());
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
 
     }
 }

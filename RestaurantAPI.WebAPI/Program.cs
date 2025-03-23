@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using RestaurantAPI.Core.Application.Mappings;
+using RestaurantAPI.Infrastructure.Identity;
 using RestaurantAPI.Infrastructure.Persistence;
 using RestaurantAPI.WebAPI.Extensions;
+using System.Threading.Tasks;
 
 namespace RestaurantAPI.WebAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,7 @@ namespace RestaurantAPI.WebAPI
             builder.Services.AddControllers();
             builder.Services.AddHealthChecks();
             builder.Services.AddPersistenceLayer(builder.Configuration);
+            builder.Services.AddIdentityInfrastructure(builder.Configuration);
             builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession();
             builder.Services.AddSwaggerExtension();
@@ -39,12 +42,18 @@ namespace RestaurantAPI.WebAPI
                 app.UseHsts();
             }
 
+            await app.Services.RunAsyncSeed();
+
             app.UseHttpsRedirection();
+
+            app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
+
+
             app.UseSwaggerExtension();
             app.UseHealthChecks("/health");
-            app.UseSession();
 
             app.MapControllers();
 

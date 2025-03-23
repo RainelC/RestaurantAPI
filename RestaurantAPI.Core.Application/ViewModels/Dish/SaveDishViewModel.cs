@@ -1,4 +1,5 @@
-﻿using RestaurantAPI.Core.Application.ViewModels.Ingredient;
+﻿using RestaurantAPI.Core.Application.Enums;
+using RestaurantAPI.Core.Application.ViewModels.Ingredient;
 using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantAPI.Core.Application.ViewModels.Dish
@@ -17,6 +18,6 @@ namespace RestaurantAPI.Core.Application.ViewModels.Dish
         [DataType(DataType.Text)]
         public int PeoplePerDish { get; set; }
         public List<IngredientViewModel> Ingredients { get; set; }
-        public string DishCategory { get; set; }
+        public DishCategory DishCategory { get; set; }
     }
 }

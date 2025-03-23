@@ -1,4 +1,5 @@
-﻿using RestaurantAPI.Core.Application.ViewModels.Dish;
+﻿using RestaurantAPI.Core.Application.Enums;
+using RestaurantAPI.Core.Application.ViewModels.Dish;
 using RestaurantAPI.Core.Application.ViewModels.Table;
 using System;
 using System.Collections.Generic;
@@ -15,9 +16,8 @@ namespace RestaurantAPI.Core.Application.ViewModels.Order
         [Required(ErrorMessage = "Debe colocar el subtotal.")]
         [DataType(DataType.Currency)]
         public double Subtotal { get; set; }
-        public string Status { get; set; }
+        public OrderStatus Status { get; set; }
         public int TableId { get; set; }
-        public TableViewModel Table { get; set; }
-        public List<DishViewModel> Dishes { get; set; }
+        public List<DishViewModel>? Dishes { get; set; }
     }
 }

@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Core.Application.Interfaces.Services;
-using RestaurantAPI.Core.Application.Services;
 using RestaurantAPI.Core.Application.ViewModels.Order;
-using RestaurantAPI.Core.Application.ViewModels.Table;
 
 namespace RestaurantAPI.WebAPI.Controllers.v1
 {
     [ApiVersion("1.0")]
+    [Authorize(Roles = "Waiter")]
     public class OrderController : BaseApiController
     {
         private readonly IOrderService _orderService;
@@ -79,20 +79,20 @@ namespace RestaurantAPI.WebAPI.Controllers.v1
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = (typeof(SaveTableViewModel)))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = (typeof(SaveOrderViewModel)))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                var table = await _orderService.GetById(id);
+                var order = await _orderService.GetById(id);
 
-                if (table == null)
+                if (order == null)
                 {
                     return NoContent();
                 }
-                return Ok(table);
+                return Ok(order);
             }
             catch (Exception ex)
             {
